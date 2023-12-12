@@ -26,7 +26,6 @@ Options:
     -t --themes_file=<path>   Путь файла с темами
 
 """
-import socketserver
 import socket
 import threading
 
@@ -38,7 +37,7 @@ from main import main
 from socketserver import *
 
 # данные сервера
-host = 'localhost'
+host = 'pythonapp'
 port = 777
 addr = (host, port)
 

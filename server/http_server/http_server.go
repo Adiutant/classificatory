@@ -12,9 +12,10 @@ import (
 )
 
 type HttpPayloadServer struct {
-	engine    *gin.Engine
-	connector payload.Connector
-	logger    *logrus.Logger
+	engine      *gin.Engine
+	connector   payload.Connector
+	logger      *logrus.Logger
+	dbConnector *db_helper.Connector
 }
 type Package struct {
 	Command string `json:"command,omitempty"`
@@ -30,10 +31,15 @@ func NewPayloadServer(network string, address string) (*HttpPayloadServer, error
 	if err != nil {
 		return nil, err
 	}
+	dbConnector, err := db_helper.Init()
+	if err != nil {
+		return nil, err
+	}
 	httpPayloadServer := HttpPayloadServer{
-		engine:    gin.Default(),
-		connector: payloadConnector,
-		logger:    logrus.New(),
+		engine:      gin.Default(),
+		connector:   payloadConnector,
+		logger:      logrus.New(),
+		dbConnector: dbConnector,
 	}
 	return &httpPayloadServer, nil
 }
@@ -71,9 +77,9 @@ func (s *HttpPayloadServer) SetRoutes() {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		hasUser, err := db_helper.Check(creds.Username, creds.Password)
+		hasUser, err := s.dbConnector.Check(creds.Username, creds.Password)
 		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		if !hasUser {

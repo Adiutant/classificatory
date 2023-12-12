@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	server, err := http_server.NewPayloadServer("tcp", "localhost:777")
+	server, err := http_server.NewPayloadServer("tcp", "pythonapp:777")
 	if err != nil {
 		fmt.Println(err)
 		return

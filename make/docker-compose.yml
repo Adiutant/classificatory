@@ -6,5 +6,21 @@ services:
       POSTGRES_DB: "test"
       POSTGRES_USER: "ts"
       POSTGRES_PASSWORD: "pass"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: ../server
     ports:
-      - "5432:5432"
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  pythonapp:
+    build: ../scripts/classificator
+    depends_on:
+      - postgres
+      - server
