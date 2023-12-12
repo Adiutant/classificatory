@@ -154,8 +154,8 @@ class Analysis(metaclass=Singleton):
         log.info(f"Adding theme {theme}")
         if self.themes.get(theme) is not None:
             log.warning('Theme already exist')
-            print("Тема " + theme + " уже существует!")
-            return 1
+            return "Тема " + theme + " уже существует!"
+
 
         # Нарушена грамматика названия темы
         # if self.spellchecker.spell(theme) is False:
@@ -168,8 +168,8 @@ class Analysis(metaclass=Singleton):
         self.themes[theme] = self.keyWordsArrayWorker(
             self.parseKeyWords(theme) + [theme])
         self.saveThemes()
-        print("Тема " + theme + " успешно добавлена!")
-        return 0
+        return "Тема " + theme + " успешно добавлена!"
+
 
     def removeTheme(self, theme):
         """Удаление темы из программы."""
@@ -177,13 +177,11 @@ class Analysis(metaclass=Singleton):
         # Если нет темы
         if self.themes.get(theme) is None:
             log.warning("Theme does not exist")
-            print("Тема " + theme + " не существует!")
-            return 1
+            return "Тема " + theme + " не существует!"
         # Убираем тему
         self.themes.pop(theme)
         self.saveThemes()
-        print("Тема " + theme + " удалена!")
-        return 0
+        return "Тема " + theme + " удалена!"
 
     def parseStringText(self, text):
         """Разделение текста на слова и сохранение частоты появления."""
@@ -267,8 +265,7 @@ class Analysis(metaclass=Singleton):
         answer += "Общая вероятность по всем темам:\n"
         for key, value in localdata.items():
             answer += "Тема: " + key.title() + " - " + str(value) + "%" + "\n"
-        print(answer)
-        return textTheme
+        return answer
 
     def saveThemes(self):
         """Сохранить данные из оперативной памяти в файл тем в конце работы."""
@@ -302,15 +299,15 @@ def main(args):
     log.debug('Base object created')
     # Добавление темы
     if args['add']:
-        obj.addTheme(args['<theme>'])
+        return obj.addTheme(args['<theme>'])
 
     # Удаление темы
     elif args['remove']:
-        obj.removeTheme(args['<theme>'])
+        return obj.removeTheme(args['<theme>'])
 
     # Вывод списка тем
     elif args['list']:
-        print(obj.getThemesFormatted())
+        return obj.getThemesFormatted()
 
     # Обработка текста
     elif args['text']:

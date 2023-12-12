@@ -27,6 +27,8 @@ Options:
 
 """
 import socketserver
+import socket
+import threading
 
 from docopt import docopt
 
@@ -46,29 +48,60 @@ DEFAULT_ARG = {
 }
 
 
-class MyTCPHandler(StreamRequestHandler):
-    # функция handle делает всю работу, необходимую для обслуживания запроса.
-    # доступны несколько атрибутов: запрос доступен как self.request, адрес как self.client_address, экземпляр сервера как self.server
-    def handle(self):
-        self.data = self.rfile.readlines()
-        print('client send: ' + str(self.data))
+class ClientThread(threading.Thread):
 
-        # sndall - отправляет сообщение
-        self.request.sendall(b'Hello from server!')
+    def __init__(self, clientAddress, clientsocket):
+        threading.Thread.__init__(self)
+        self.csocket = clientsocket
+        print("New connection added: ", clientAddress)
+
+    def run(self):
+        print("Connection from : ", clientAddress)
+        # self.csocket.send(bytes("Hi, This is from Server..",'utf-8'))
+        msg = ''
+        while True:
+            data = ""
+            args = docopt(__doc__, version=__version__)
+            args['use_local_files'] = 0  # Флаг использования файлов по умолчанию
+            if not args['--themes_file']:
+                args['--themes_file'] = DEFAULT_ARG['--themes_file']
+                args['use_local_files'] += 1
+            if not args['--input_file']:
+                args['--input_file'] = DEFAULT_ARG['--input_file']
+                args['use_local_files'] += 2
+
+            data = self.csocket.recv(32000)
+            if len(data) == 0:
+                print("")
+                return
+            if data == b'CheckHealth':
+                self.csocket.send(bytes("{Ready}", 'utf-8'))
+                continue
+            elif data[:3] == b'Add':
+                args['add'] = 1
+                args['<theme>'] = data[3:].decode()
+            elif data[:6] == b'Remove':
+                args['remove'] = 1
+                args['<theme>'] = data[6:].decode()
+            elif data[:4] == b'List':
+                args['list'] = 1
+            elif data[:4] == b'Text':
+                args['text'] = 1
+                args['<text>'] = data[4:].decode()
+
+            # Запуск
+            answer = '{' + main(args) + '}'
+            self.csocket.send(bytes(answer, 'utf-8'))
 
 
 if __name__ == '__main__':
-
-    with socketserver.TCPServer(addr, MyTCPHandler) as server:
-        server.serve_forever()
-    args = docopt(__doc__, version=__version__)
-    # Запуск без параметров
-    args['use_local_files'] = 0  # Флаг использования файлов по умолчанию
-    if not args['--themes_file']:
-        args['--themes_file'] = DEFAULT_ARG['--themes_file']
-        args['use_local_files'] += 1
-    if not args['--input_file']:
-        args['--input_file'] = DEFAULT_ARG['--input_file']
-        args['use_local_files'] += 2
-    # Запуск
-    main(args)
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(addr)
+    print("Server started")
+    print("Waiting for client request..")
+    while True:
+        server.listen(1)
+        clientsock, clientAddress = server.accept()
+        newthread = ClientThread(clientAddress, clientsock)
+        newthread.start()

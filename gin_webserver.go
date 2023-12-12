@@ -3,16 +3,10 @@ package main
 import (
 	"fmt"
 	"gin_webserver/http_server"
-	"net"
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "golang.org:80")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	server, err := http_server.NewPayloadServer(conn)
+	server, err := http_server.NewPayloadServer("tcp", "localhost:777")
 	if err != nil {
 		fmt.Println(err)
 		return

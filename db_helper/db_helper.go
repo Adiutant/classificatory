@@ -3,29 +3,27 @@ package db_helper
 import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"log"
 )
 
-//var schema = `
-//CREATE TABLE IF NOT EXISTS Users (
-//    user_name text NOT NULL PRIMARY KEY,
-//    password text,
-//    balance text,
-//    activity int,
-//    bank_country_code text,
-//    bank_name text
-//);
-//CREATE TABLE IF NOT EXISTS Transactions(
-//    id serial NOT NULL PRIMARY KEY ,
-//    sender_user_name text,
-//    sender_balance text,
-//    sender_result_balance text,
-//    recipient_user_name text,
-//    recipient_balance text,
-//    recipient_result_balance text,
-//    amount text
-//
-//);`
+type User struct {
+	Username string `db:"user_name"`
+	Password string `db:"password"`
+	Role     string `db:"role"`
+}
 
-type DBHelper struct {
-	dbConnection *sqlx.DB
+func Check(username string, password string) (bool, error) {
+	connStr := "host=localhost port=5432 user=ts password=pass dbname=test sslmode=disable"
+	db, err := sqlx.Connect("postgres", connStr)
+	if err != nil {
+		return false, err
+	}
+	var u User
+	err = db.Get(&u, "SELECT * FROM Users WHERE user_name=$1 AND password=$2", username, password)
+	if err != nil {
+		log.Println(err)
+		return false, err
+	}
+	return true, nil
+
 }
