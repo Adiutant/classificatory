@@ -8,6 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Собираем Go приложение
+RUN go mod tidy
 RUN go build -v /app/gin_webserver.go
 
 
