@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"gin_webserver/http_server"
+	"gin_webserver/router"
 )
 
 func main() {
-	server, err := http_server.NewPayloadServer("tcp", "pythonapp:777")
+	server, err := router.NewPayloadServer("tcp", "pythonapp:777")
 	if err != nil {
 		fmt.Println(err)
 		return

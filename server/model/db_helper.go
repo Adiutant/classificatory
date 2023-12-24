@@ -1,4 +1,4 @@
-package db_helper
+package model
 
 import (
 	"database/sql"
@@ -11,16 +11,11 @@ import (
 	"log"
 )
 
-type User struct {
-	Username string `db:"user_name"`
-	Password string `db:"password"`
-	Role     string `db:"role"`
-}
-type Connector struct {
+type DBConnector struct {
 	dbConn *sqlx.DB
 }
 
-func Init() (*Connector, error) {
+func Init() (*DBConnector, error) {
 	connStr := "host=postgres port=5432 user=ts password=pass dbname=test sslmode=disable"
 	dbMigrate, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -47,9 +42,9 @@ func Init() (*Connector, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Connector{dbConn: db}, nil
+	return &DBConnector{dbConn: db}, nil
 }
-func (c *Connector) Check(username string, password string) (bool, error) {
+func (c *DBConnector) Check(username string, password string) (bool, error) {
 
 	var u User
 	err := c.dbConn.Get(&u, "SELECT * FROM Users WHERE user_name=$1 AND password=$2", username, password)

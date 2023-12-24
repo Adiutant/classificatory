@@ -1,9 +1,9 @@
-package http_server
+package router
 
 import (
 	"fmt"
-	"gin_webserver/db_helper"
-	"gin_webserver/payload"
+	"gin_webserver/controller"
+	"gin_webserver/model"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -13,9 +13,9 @@ import (
 
 type HttpPayloadServer struct {
 	engine      *gin.Engine
-	connector   payload.Connector
+	connector   controller.Connector
 	logger      *logrus.Logger
-	dbConnector *db_helper.Connector
+	dbConnector *model.DBConnector
 }
 type Package struct {
 	Command string `json:"command,omitempty"`
@@ -27,11 +27,11 @@ type Credentials struct {
 }
 
 func NewPayloadServer(network string, address string) (*HttpPayloadServer, error) {
-	payloadConnector, err := payload.NewClassificationConnector(network, address)
+	payloadConnector, err := controller.NewClassificationConnector(network, address)
 	if err != nil {
 		return nil, err
 	}
-	dbConnector, err := db_helper.Init()
+	dbConnector, err := model.Init()
 	if err != nil {
 		return nil, err
 	}
