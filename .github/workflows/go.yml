@@ -17,4 +17,5 @@ jobs:
     - name: Docker Compose Action           
       uses: isbang/compose-action@v1.5.1
     - name : Docker Compose Up
-      run: ls && cd ../make && docker-compose up
+      working-directory: ./make
+      run: docker-compose up
