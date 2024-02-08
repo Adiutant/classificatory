@@ -13,14 +13,14 @@ services:
       retries: 5
 
   server:
-    build: ../server
+    build: server
     ports:
       - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
   pythonapp:
-    build: ../scripts/classificator
+    build: scripts/classificator
     depends_on:
       - postgres
       - server
