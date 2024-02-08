@@ -12,7 +12,5 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:          
-    - name: Docker Compose Action 
-      uses: isbang/compose-action@v1.5.1
     - name : Docker Compose Up
       run: docker-compose up
