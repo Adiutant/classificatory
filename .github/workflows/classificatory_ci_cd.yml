@@ -17,5 +17,5 @@ jobs:
     - name : Test
       run: ls
     - name : Docker Compose Up
-      working-directory: ./make
+      working-directory: make
       run: docker-compose up
