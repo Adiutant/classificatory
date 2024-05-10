@@ -41,9 +41,25 @@ func NewPayloadServer(network string, address string) (*HttpPayloadServer, error
 		logger:      logrus.New(),
 		dbConnector: dbConnector,
 	}
+	httpPayloadServer.engine.Use(CORSMiddleware())
 	return &httpPayloadServer, nil
 }
+func CORSMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
 
+        c.Header("Access-Control-Allow-Origin", "*")
+        c.Header("Access-Control-Allow-Credentials", "true")
+        c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+        c.Header("Access-Control-Allow-Methods", "POST,HEAD,PATCH, OPTIONS, GET, PUT")
+
+        if c.Request.Method == "OPTIONS" {
+            c.AbortWithStatus(204)
+            return
+        }
+
+        c.Next()
+    }
+}
 func auth(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	bearerToken := strings.Split(authHeader, " ")
@@ -115,6 +131,11 @@ func (s *HttpPayloadServer) SetRoutes() {
 			Payload: data,
 		}
 		c.JSON(http.StatusOK, &resp)
+		return
+	})
+	s.engine.OPTIONS("/request-payload", func(c *gin.Context) {
+
+		c.AbortWithStatus(204)
 		return
 	})
 
