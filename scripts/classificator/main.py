@@ -239,7 +239,7 @@ class Analysis(metaclass=Singleton):
                 f"Matching occurences for theme {list(self.themes.keys())[len(counts) - 1]}" +
                 f" - {sum(themeCount)} matches")
         countsAll = sum(counts)  # Всего слов которые нашлись в темах
-	if countsAll == 0 :
+        if countsAll == 0:
 	    countsAll = 1;
         log.info(F"Occurences array: {', '.join(map(str, counts))}")
         log.info(F"Total occuences: {countsAll}")
