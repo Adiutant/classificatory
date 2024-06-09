@@ -13,5 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:          
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - name: Docker Compose Action 
       uses: isbang/compose-action@v1.5.1
