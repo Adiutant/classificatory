@@ -15,5 +15,9 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+    - name: Git Submodule Update
+      run: |
+        git pull --recurse-submodules
+        git submodule update --remote --recursive
     - name: Docker Compose Action 
       uses: isbang/compose-action@v1.5.1
