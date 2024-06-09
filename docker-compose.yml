@@ -24,3 +24,12 @@ services:
     depends_on:
       - postgres
       - server
+  frontend:
+    build: ClassificatorFront
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      postgres:
+        condition:
+          service_healthy
