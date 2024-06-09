@@ -1,0 +1,3 @@
+[submodule "ClassificatorFront"]
+	path = ClassificatorFront
+	url = https://github.com/Yaeram/ClassificatorFront

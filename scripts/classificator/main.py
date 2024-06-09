@@ -240,7 +240,7 @@ class Analysis(metaclass=Singleton):
                 f" - {sum(themeCount)} matches")
         countsAll = sum(counts)  # Всего слов которые нашлись в темах
         if countsAll == 0:
-	    countsAll = 1;
+	        countsAll = 1;
         log.info(F"Occurences array: {', '.join(map(str, counts))}")
         log.info(F"Total occuences: {countsAll}")
         # Возврат: тема - процент слов
